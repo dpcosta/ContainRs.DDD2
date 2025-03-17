@@ -121,14 +121,11 @@ public static class PropostasEndpoints
         builder.MapPatch("{id:guid}/proposals/{propostaId:guid}/accept", async (
             [FromRoute] Guid id,
             [FromRoute] Guid propostaId,
-            [FromServices] IRepository<Proposta> repoProposta,
-            [FromServices] IRepository<Locacao> repoLocacao) =>
+            [FromServices] IPropostaService service) =>
         {
-            var casoUso = new AprovarProposta(id, propostaId);
-            casoUso.ExecutarASync()
-
-            
-
+            var comando = new AprovarProposta(id, propostaId);
+            var proposta = await service.AprovarAsync(comando);
+            if (proposta is null) return Results.NotFound();
             return Results.Ok(PropostaResponse.From(proposta));
         })
         .WithSummary("Cliente aceita proposta de locação.")
