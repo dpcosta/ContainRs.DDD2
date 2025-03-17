@@ -124,30 +124,10 @@ public static class PropostasEndpoints
             [FromServices] IRepository<Proposta> repoProposta,
             [FromServices] IRepository<Locacao> repoLocacao) =>
         {
+            var casoUso = new AprovarProposta(id, propostaId);
+            casoUso.ExecutarASync()
 
-            var proposta = await repoProposta
-                .GetFirstAsync(
-                    p => p.Id == propostaId && p.SolicitacaoId == id,
-                    p => p.Id);
-            if (proposta is null) return Results.NotFound();
-
-            proposta.Situacao = SituacaoProposta.Aceita;
-
-            // criar locação a partir da proposta aceita
-            var locacao = new Locacao()
-            {
-                PropostaId = proposta.Id,
-                DataInicio = DateTime.Now,
-                DataPrevistaEntrega = proposta.Solicitacao.DataInicioOperacao.AddDays(-proposta.Solicitacao.DisponibilidadePrevia),
-                DataTermino = proposta.Solicitacao.DataInicioOperacao.AddDays(proposta.Solicitacao.DuracaoPrevistaLocacao)
-            };
-
-            using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
-
-            await repoProposta.UpdateAsync(proposta);
-            await repoLocacao.AddAsync(locacao);
-
-            scope.Complete();
+            
 
             return Results.Ok(PropostaResponse.From(proposta));
         })
