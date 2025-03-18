@@ -47,4 +47,11 @@ public class Proposta
     {
         Comentarios.Remove(comentario);
     }
+
+    public bool Aprovar()
+    {
+        if (Situacao != SituacaoProposta.Enviada) return false;
+        Situacao = SituacaoProposta.Aceita;
+        return true;
+    }
 }
