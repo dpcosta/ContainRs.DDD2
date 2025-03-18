@@ -14,7 +14,7 @@ public record PropostaResponse(string Id, string Status, decimal Valor, DateTime
     public static PropostaResponse From(Proposta proposta) => new(
         Id: proposta.Id.ToString(),
         Status: proposta.Situacao.ToString(),
-        Valor: proposta.ValorTotal,
+        Valor: proposta.ValorTotal.Valor,
         DataExpiracao: proposta.DataExpiracao
     );
 }

@@ -7,8 +7,12 @@ public class PropostaConfigurations : IEntityTypeConfiguration<Proposta>
 {
     public void Configure(EntityTypeBuilder<Proposta> builder)
     {
-        builder.Property(p => p.ValorTotal)
-            .HasColumnType("decimal(18,2)");
+        builder.OwnsOne(p => p.ValorTotal, builder =>
+        {
+            builder
+                .Property(v => v.Valor)
+                .HasColumnType("decimal(18,2)");
+        }); 
 
         builder.OwnsOne(p => p.Situacao, status =>
         {
