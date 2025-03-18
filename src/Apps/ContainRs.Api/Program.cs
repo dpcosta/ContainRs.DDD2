@@ -28,6 +28,7 @@ builder.Services.AddScoped<IRepository<Proposta>, PropostaRepository>();
 builder.Services.AddScoped<IRepository<Locacao>, LocacaoRepository>();
 builder.Services.AddScoped<IRepository<Conteiner>, ConteinerRepository>();
 
+builder.Services.AddScoped<ICalculadoraPrazosLocacao, CalculadoraPadraoPrazosLocacao>();
 builder.Services.AddScoped<IPropostaService, PropostaService>();
 builder.Services.AddScoped<IAcessoManager, AcessoManagerWithIdentity>();
 
