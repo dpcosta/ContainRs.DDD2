@@ -46,7 +46,7 @@ public static class PropostasEndpoints
                 var proposta = new Proposta()
                 {
                     Id = Guid.NewGuid(),
-                    ValorTotal = request.ValorTotal,
+                    ValorTotal = new ValorMonetario(request.ValorTotal),
                     DataCriacao = DateTime.Now,
                     DataExpiracao = request.DataExpiracao,
                     NomeArquivo = request.Arquivo.FileName,

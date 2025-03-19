@@ -22,12 +22,23 @@ public record SituacaoProposta(string Status)
     }
 }
 
+public record ValorMonetario
+{
+    public ValorMonetario(decimal valor)
+    {
+        if (valor < 0) valor = 0;
+        Valor = valor;
+    }
+
+    public decimal Valor { get; }
+}
+
 public class Proposta
 {
     public Proposta() { }
     public Guid Id { get; set; }
     public SituacaoProposta Situacao { get; set; } = SituacaoProposta.Enviada;
-    public decimal ValorTotal { get; set; }
+    public ValorMonetario ValorTotal { get; set; }
     public DateTime DataCriacao { get; set; }
     public DateTime DataExpiracao { get; set; }
     public string NomeArquivo { get; set; }
