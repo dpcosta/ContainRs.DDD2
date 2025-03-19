@@ -19,11 +19,13 @@ public class PropostaService : IPropostaService
 {
     private readonly IRepository<Proposta> repoProposta;
     private readonly IRepository<Locacao> repoLocacao;
+    private readonly ICalculadoraPrazosLocacao calculadora;
 
-    public PropostaService(IRepository<Proposta> repoProposta, IRepository<Locacao> repoLocacao)
+    public PropostaService(IRepository<Proposta> repoProposta, IRepository<Locacao> repoLocacao, ICalculadoraPrazosLocacao calculadora)
     {
         this.repoProposta = repoProposta;
         this.repoLocacao = repoLocacao;
+        this.calculadora = calculadora;
     }
 
     public async Task<Proposta?> AprovarAsync(AprovarProposta comando)
@@ -41,8 +43,10 @@ public class PropostaService : IPropostaService
             {
                 PropostaId = proposta.Id,
                 DataInicio = DateTime.Now,
-                DataPrevistaEntrega = proposta.Solicitacao.DataInicioOperacao.AddDays(-proposta.Solicitacao.DisponibilidadePrevia),
-                DataTermino = proposta.Solicitacao.DataInicioOperacao.AddDays(proposta.Solicitacao.DuracaoPrevistaLocacao)
+                DataPrevistaEntrega = calculadora
+                    .CalculaDataPrevistaParaEntrega(proposta),
+                DataTermino = calculadora
+                    .CalculaDataPrevistaParaTermino(proposta)
             };
 
             using var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
