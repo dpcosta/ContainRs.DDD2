@@ -1,7 +1,6 @@
 using ContainRs.Api.Data;
 using ContainRs.Api.Data.Repositories;
 using ContainRs.Api.Identity;
-using ContainRs.Engenharia.Conteineres;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -27,6 +26,7 @@ builder.Services.AddScoped<IRepository<PedidoLocacao>, SolicitacaoRepository>();
 builder.Services.AddScoped<IRepository<Proposta>, PropostaRepository>();
 builder.Services.AddScoped<IRepository<Locacao>, LocacaoRepository>();
 builder.Services.AddScoped<IRepository<Conteiner>, ConteinerRepository>();
+builder.Services.AddScoped<IRepository<Fatura>, FaturaRepository>();
 
 builder.Services.AddScoped<ICalculadoraPrazosLocacao, CalculadoraPadraoPrazosLocacao>();
 builder.Services.AddScoped<IPropostaService, PropostaService>();
@@ -38,6 +38,7 @@ builder.Services
     .AddEntityFrameworkStores<IdentityDbContext>();
 
 builder.Services.AddAuthorization();
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.Configure<IdentityOptions>(options =>
 {

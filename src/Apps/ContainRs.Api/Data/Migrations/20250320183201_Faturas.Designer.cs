@@ -4,6 +4,7 @@ using ContainRs.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ContainRs.Api.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250320183201_Faturas")]
+    partial class Faturas
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,28 +24,6 @@ namespace ContainRs.Api.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("ContainRs.Api.Eventos.OutboxMessage", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("DataCriacao")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("InfoEvento")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TipoEvento")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Outbox");
-                });
 
             modelBuilder.Entity("ContainRs.Clientes.Cadastro.Cliente", b =>
                 {
@@ -269,6 +250,9 @@ namespace ContainRs.Api.Data.Migrations
                     b.Property<Guid>("SolicitacaoId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<decimal>("ValorTotal")
+                        .HasColumnType("decimal(18,2)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("SolicitacaoId");
@@ -433,29 +417,10 @@ namespace ContainRs.Api.Data.Migrations
                                 .HasForeignKey("PropostaId");
                         });
 
-                    b.OwnsOne("ContainRs.Vendas.Propostas.ValorMonetario", "ValorTotal", b1 =>
-                        {
-                            b1.Property<Guid>("PropostaId")
-                                .HasColumnType("uniqueidentifier");
-
-                            b1.Property<decimal>("Valor")
-                                .HasColumnType("decimal(18,2)");
-
-                            b1.HasKey("PropostaId");
-
-                            b1.ToTable("Propostas");
-
-                            b1.WithOwner()
-                                .HasForeignKey("PropostaId");
-                        });
-
                     b.Navigation("Situacao")
                         .IsRequired();
 
                     b.Navigation("Solicitacao");
-
-                    b.Navigation("ValorTotal")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("ContainRs.Clientes.Cadastro.Cliente", b =>

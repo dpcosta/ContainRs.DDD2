@@ -17,6 +17,7 @@ public class AppDbContext : DbContext
     public DbSet<Proposta> Propostas { get; set; }
     public DbSet<Locacao> Locacoes { get; set; }
     public DbSet<Conteiner> Conteineres { get; set; }
+    public DbSet<Fatura> Faturas { get; set; }
     public DbSet<OutboxMessage> Outbox { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
