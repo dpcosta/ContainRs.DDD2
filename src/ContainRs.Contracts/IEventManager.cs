@@ -9,4 +9,5 @@ namespace ContainRs.Contracts;
 public interface IEventManager
 {
     Task<IEnumerable<T>> GetNotProcessedAsync<T>(string eventType, string readerType);
+    Task MarkAsProcessedAsync(string eventType, string readerType);
 }

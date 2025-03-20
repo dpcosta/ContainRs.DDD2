@@ -18,6 +18,7 @@ public class PropostaAprovadaDto
 public class EmissorFaturaJob
 {
     public const string INBOX_ID = "emissor-fatura";
+    public const string OUTBOX_TYPE = "PropostaAprovada";
     private readonly ILogger<EmissorFaturaJob> _logger;
     private readonly IRepository<Fatura> repoFatura;
     private readonly IEventManager eventManager;
@@ -34,7 +35,7 @@ public class EmissorFaturaJob
         _logger.LogInformation("Executando o emissor de fatura...");
 
         var mensagens = await eventManager
-            .GetNotProcessedAsync<PropostaAprovadaDto>("PropostaAprovada", nameof(EmissorFaturaJob));
+            .GetNotProcessedAsync<PropostaAprovadaDto>(OUTBOX_TYPE, nameof(EmissorFaturaJob));
 
         foreach (var proposta in mensagens)
         {
@@ -49,6 +50,8 @@ public class EmissorFaturaJob
                 Total = proposta.ValorProposta,
             };
             await repoFatura.AddAsync(fatura);
+            await eventManager
+                .MarkAsProcessedAsync(OUTBOX_TYPE, nameof(EmissorFaturaJob));
         }
     }
 }
