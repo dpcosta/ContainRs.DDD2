@@ -72,4 +72,9 @@ public class Proposta : IAgreggateRoot
         Events.Add(new PropostaAprovada(Id, ValorTotal.Valor));
         return true;
     }
+
+    public void RemoverEventos()
+    {
+        Events.Clear();
+    }
 }

@@ -1,4 +1,6 @@
-﻿using ContainRs.Api.Eventos;
+﻿using System.Text.Json;
+using ContainRs.Api.Eventos;
+using ContainRs.DDD;
 using ContainRs.Engenharia.Conteineres;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,5 +23,33 @@ public class AppDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
+    }
+
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        var domainEvents = ChangeTracker
+            .Entries<IAgreggateRoot>()
+            .Select(entry => entry.Entity)
+            .SelectMany(entity =>
+            {
+                var events = entity.Events;
+                entity.RemoverEventos();
+                return events;
+            })
+            .ToList();
+
+        var outboxMessages = domainEvents
+            .Select(@event => new OutboxMessage
+            {
+                Id = Guid.NewGuid(),
+                TipoEvento = @event.GetType().Name,
+                InfoEvento = JsonSerializer.Serialize(@event),
+                DataCriacao = DateTime.Now,
+            })
+            .ToList();
+
+        Outbox.AddRange(outboxMessages);
+
+        return base.SaveChangesAsync(cancellationToken);
     }
 }
