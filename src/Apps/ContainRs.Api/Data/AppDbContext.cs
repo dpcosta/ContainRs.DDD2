@@ -18,6 +18,7 @@ public class AppDbContext : DbContext
     public DbSet<Locacao> Locacoes { get; set; }
     public DbSet<Conteiner> Conteineres { get; set; }
     public DbSet<OutboxMessage> Outbox { get; set; }
+    public DbSet<InboxMessage> Inbox { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
