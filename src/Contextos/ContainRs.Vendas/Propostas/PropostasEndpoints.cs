@@ -46,6 +46,7 @@ public static class PropostasEndpoints
                 var proposta = new Proposta()
                 {
                     Id = Guid.NewGuid(),
+                    ClienteId = solicitacao.ClienteId,
                     ValorTotal = request.ValorTotal,
                     DataCriacao = DateTime.Now,
                     DataExpiracao = request.DataExpiracao,
@@ -57,11 +58,12 @@ public static class PropostasEndpoints
 
                 return Results.CreatedAtRoute(
                     ENDPOINT_NAME_GET_PROPOSTA,
-                    new { proposta.Id },
+                    new { Id = proposta.SolicitacaoId, PropostaId = proposta.Id },
                     PropostaResponse.From(proposta));
             })
             // deveria ser Comercial, mas para não criarmos usuários com papéis diferentes, usaremos o papel (role) Suporte
             .RequireAuthorization(policy => policy.RequireRole("Suporte"))
+            .DisableAntiforgery()
             .WithSummary("Vendedor envia proposta de locação")
             .Produces(StatusCodes.Status404NotFound)
             .Produces<PropostaResponse>(StatusCodes.Status201Created);
@@ -73,12 +75,21 @@ public static class PropostasEndpoints
         builder.MapGet("{id:guid}/proposals/{propostaId:guid}", async (
             [FromRoute] Guid id,
             [FromRoute] Guid propostaId,
+            [FromServices] IHttpContextAccessor accessor,
             [FromServices] IRepository<Proposta> repository) =>
         {
+            var clienteId = accessor.HttpContext?.User.Claims
+                .Where(c => c.Type.Equals("ClienteId"))
+                .Select(c => c.Value)
+                .FirstOrDefault();
+
+            if (clienteId is null) return Results.Unauthorized();
 
             var proposta = await repository
                 .GetFirstAsync(
-                    p => p.Id == propostaId && p.SolicitacaoId == id,
+                    p => p.Id == propostaId 
+                        && p.SolicitacaoId == id
+                        && p.ClienteId == Guid.Parse(clienteId),
                     p => p.Id);
             if (proposta is null) return Results.NotFound();
 
@@ -97,12 +108,19 @@ public static class PropostasEndpoints
     {
         builder.MapGet("{id:guid}/proposals", async (
             [FromRoute] Guid id,
+            [FromServices] IHttpContextAccessor accessor,
             [FromServices] IRepository<PedidoLocacao> repository) =>
         {
+            var clienteId = accessor.HttpContext?.User.Claims
+                .Where(c => c.Type.Equals("ClienteId"))
+                .Select(c => c.Value)
+                .FirstOrDefault();
+
+            if (clienteId is null) return Results.Unauthorized();
 
             var solicitacao = await repository
                 .GetFirstAsync(
-                    s => s.Id == id,
+                    s => s.Id == id && s.ClienteId == Guid.Parse(clienteId),
                     s => s.Id);
             if (solicitacao is null) return Results.NotFound();
 
