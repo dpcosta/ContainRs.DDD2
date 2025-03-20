@@ -1,4 +1,5 @@
-﻿using ContainRs.Engenharia.Conteineres;
+﻿using ContainRs.Api.Eventos;
+using ContainRs.Engenharia.Conteineres;
 using Microsoft.EntityFrameworkCore;
 
 namespace ContainRs.Api.Data;
@@ -14,6 +15,7 @@ public class AppDbContext : DbContext
     public DbSet<Proposta> Propostas { get; set; }
     public DbSet<Locacao> Locacoes { get; set; }
     public DbSet<Conteiner> Conteineres { get; set; }
+    public DbSet<OutboxMessage> Outbox { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
