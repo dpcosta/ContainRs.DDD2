@@ -29,6 +29,7 @@
     <ProjectReference Include="..\..\ContainRs.DDD\ContainRs.DDD.csproj" />
     <ProjectReference Include="..\..\Contextos\ContainRs.Clientes\ContainRs.Clientes.csproj" />
     <ProjectReference Include="..\..\Contextos\ContainRs.Engenharia\ContainRs.Engenharia.csproj" />
+    <ProjectReference Include="..\..\Contextos\ContainRs.Financeiro\ContainRs.Financeiro.csproj" />
     <ProjectReference Include="..\..\Contextos\ContainRs.Vendas\ContainRs.Vendas.csproj" />
   </ItemGroup>
 
