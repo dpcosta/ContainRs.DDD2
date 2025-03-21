@@ -34,7 +34,7 @@ public class AppDbContext : DbContext
             .Select(entry => entry.Entity)
             .SelectMany(entity =>
             {
-                var events = entity.Events;
+                var events = entity.Events.ToList();
                 entity.RemoverEventos();
                 return events;
             })

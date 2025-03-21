@@ -1,6 +1,7 @@
 using ContainRs.Api.Data;
 using ContainRs.Api.Data.Repositories;
 using ContainRs.Api.Identity;
+using Hangfire;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -45,6 +46,11 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.ClaimsIdentity.UserIdClaimType = "ClienteId";
 });
 
+builder.Services.AddHangfire(config =>
+{
+    config.UseSqlServerStorage(builder.Configuration.GetConnectionString("ContainRsDB"));
+}).AddHangfireServer(options => options.SchedulePollingInterval = TimeSpan.FromSeconds(5));
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -65,5 +71,13 @@ app
     .MapPropostasEndpoints()
     .MapLocacoesEndpoints()
     .MapConteineresEndpoints();
+
+app.Services
+    .GetRequiredService<IRecurringJobManager>()
+    .AddOrUpdate<EmissorDeFaturas>(
+        nameof(EmissorDeFaturas),
+        job => job.ExecuteAsync(),
+        "* * * * *" // executando a cada minuto
+    );
 
 app.Run();
