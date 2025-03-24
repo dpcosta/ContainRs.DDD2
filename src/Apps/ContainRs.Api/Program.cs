@@ -4,6 +4,7 @@ using ContainRs.Api.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Hangfire;
+using ContainRs.Api.Eventos;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +29,7 @@ builder.Services.AddScoped<IRepository<Proposta>, PropostaRepository>();
 builder.Services.AddScoped<IRepository<Locacao>, LocacaoRepository>();
 builder.Services.AddScoped<IRepository<Conteiner>, ConteinerRepository>();
 builder.Services.AddScoped<IRepository<Fatura>, FaturaRepository>();
+builder.Services.AddScoped<IEventoManager, EventoManager>();
 
 builder.Services.AddScoped<ICalculadoraPrazosLocacao, CalculadoraPadraoPrazosLocacao>();
 builder.Services.AddScoped<IPropostaService, PropostaService>();
